@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClassesIndexRouteImport } from './routes/classes/index'
+import { Route as ApiCanvasSettingsRouteImport } from './routes/api/canvas-settings'
 import { Route as ClassesClassIdIndexRouteImport } from './routes/classes/$classId/index'
 import { Route as ApiCanvasSyncActionRouteImport } from './routes/api/canvas-sync/$action'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -44,6 +45,11 @@ const IndexRoute = IndexRouteImport.update({
 const ClassesIndexRoute = ClassesIndexRouteImport.update({
   id: '/classes/',
   path: '/classes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCanvasSettingsRoute = ApiCanvasSettingsRouteImport.update({
+  id: '/api/canvas-settings',
+  path: '/api/canvas-settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClassesClassIdIndexRoute = ClassesClassIdIndexRouteImport.update({
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/success': typeof SuccessRoute
+  '/api/canvas-settings': typeof ApiCanvasSettingsRoute
   '/classes/': typeof ClassesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/canvas-sync/$action': typeof ApiCanvasSyncActionRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/success': typeof SuccessRoute
+  '/api/canvas-settings': typeof ApiCanvasSettingsRoute
   '/classes': typeof ClassesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/canvas-sync/$action': typeof ApiCanvasSyncActionRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/success': typeof SuccessRoute
+  '/api/canvas-settings': typeof ApiCanvasSettingsRoute
   '/classes/': typeof ClassesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/canvas-sync/$action': typeof ApiCanvasSyncActionRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/success'
+    | '/api/canvas-settings'
     | '/classes/'
     | '/api/auth/$'
     | '/api/canvas-sync/$action'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/success'
+    | '/api/canvas-settings'
     | '/classes'
     | '/api/auth/$'
     | '/api/canvas-sync/$action'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/success'
+    | '/api/canvas-settings'
     | '/classes/'
     | '/api/auth/$'
     | '/api/canvas-sync/$action'
@@ -167,6 +179,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   SuccessRoute: typeof SuccessRoute
+  ApiCanvasSettingsRoute: typeof ApiCanvasSettingsRoute
   ClassesIndexRoute: typeof ClassesIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCanvasSyncActionRoute: typeof ApiCanvasSyncActionRoute
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       path: '/classes'
       fullPath: '/classes/'
       preLoaderRoute: typeof ClassesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/canvas-settings': {
+      id: '/api/canvas-settings'
+      path: '/api/canvas-settings'
+      fullPath: '/api/canvas-settings'
+      preLoaderRoute: typeof ApiCanvasSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/classes/$classId/': {
@@ -263,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   SuccessRoute: SuccessRoute,
+  ApiCanvasSettingsRoute: ApiCanvasSettingsRoute,
   ClassesIndexRoute: ClassesIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCanvasSyncActionRoute: ApiCanvasSyncActionRoute,

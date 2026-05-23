@@ -9,35 +9,14 @@ import {
 } from "@canvas-v4/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
 import {
-	Atom,
-	Blocks,
-	BookOpen,
-	BrainCircuit,
-	ChevronLeft,
-	Earth,
-	FlaskConical,
 	GraduationCap,
 	Home,
-	LayoutList,
-	LayoutTemplate,
-	Megaphone,
 	MessageCircle,
-	PencilLine,
-	Sigma,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { canvas } from "@/lib/canvas";
 import { ClassSidebar } from "./sidebar/class-sidebar";
-
-const demoClasses = [
-	{ icon: <FlaskConical />, name: "Biology" },
-	{ icon: <Atom />, name: "Physics" },
-	{ icon: <Sigma />, name: "A&A" },
-	{ icon: <BookOpen />, name: "English" },
-	{ icon: <Earth />, name: "Spanish" },
-	{ icon: <BrainCircuit />, name: "ToK" },
-];
 
 export function AppSidebar() {
 	const [hasGoneBack, setHasGoneBack] = useState(false);

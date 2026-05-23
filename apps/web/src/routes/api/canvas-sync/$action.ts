@@ -10,6 +10,8 @@ import { auth } from "@canvas-v4/auth";
 import { env } from "@canvas-v4/env/server";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { getCanvasSettings } from "@/lib/server/canvas-settings";
+
 export const Route = createFileRoute("/api/canvas-sync/$action")({
   server: {
     handlers: {
@@ -17,7 +19,7 @@ export const Route = createFileRoute("/api/canvas-sync/$action")({
         const session = await auth.api.getSession({ headers: request.headers });
         if (!session) return json({ error: "Unauthorized" }, 401);
 
-        const options = getCanvasOptions(session.user.id);
+        const options = await getCanvasOptions(session.user.id);
         if (!options) return json(missingCanvasConfigEnvelope(params.action));
 
         if (params.action === "bootstrap") {
@@ -33,7 +35,7 @@ export const Route = createFileRoute("/api/canvas-sync/$action")({
         const session = await auth.api.getSession({ headers: request.headers });
         if (!session) return json({ error: "Unauthorized" }, 401);
 
-        const options = getCanvasOptions(session.user.id);
+        const options = await getCanvasOptions(session.user.id);
         const body = await request.json().catch(() => ({}));
         const courseId = readString(body, "courseId");
         const assignmentId = readString(body, "assignmentId");
@@ -59,7 +61,16 @@ export const Route = createFileRoute("/api/canvas-sync/$action")({
   },
 });
 
-function getCanvasOptions(userId: string) {
+async function getCanvasOptions(userId: string) {
+  const settings = await getCanvasSettings(userId);
+  if (settings?.domain && settings.accessToken) {
+    return {
+      domain: settings.domain,
+      token: settings.accessToken,
+      userId,
+    };
+  }
+
   if (!env.CANVAS_DOMAIN || !env.CANVAS_ACCESS_TOKEN) return undefined;
   return {
     domain: env.CANVAS_DOMAIN,
