@@ -25,6 +25,7 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
+    "test": "turbo test",
     "dev:web": "turbo -F web dev",
     "db:push": "turbo -F @canvas-v4/db db:push",
     "db:studio": "turbo -F @canvas-v4/db db:studio",

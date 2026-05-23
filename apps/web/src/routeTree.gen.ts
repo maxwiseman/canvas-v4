@@ -13,7 +13,13 @@ import { Route as SuccessRouteImport } from './routes/success'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ClassesIndexRouteImport } from './routes/classes/index'
+import { Route as ClassesClassIdIndexRouteImport } from './routes/classes/$classId/index'
+import { Route as ApiCanvasSyncActionRouteImport } from './routes/api/canvas-sync/$action'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ClassesClassIdModulesIndexRouteImport } from './routes/classes/$classId/modules/index'
+import { Route as ClassesClassIdAssignmentsIndexRouteImport } from './routes/classes/$classId/assignments/index'
+import { Route as ClassesClassIdAssignmentsAssignmentIdIndexRouteImport } from './routes/classes/$classId/assignments/$assignmentId/index'
 
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
@@ -35,25 +41,70 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClassesIndexRoute = ClassesIndexRouteImport.update({
+  id: '/classes/',
+  path: '/classes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClassesClassIdIndexRoute = ClassesClassIdIndexRouteImport.update({
+  id: '/classes/$classId/',
+  path: '/classes/$classId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCanvasSyncActionRoute = ApiCanvasSyncActionRouteImport.update({
+  id: '/api/canvas-sync/$action',
+  path: '/api/canvas-sync/$action',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClassesClassIdModulesIndexRoute =
+  ClassesClassIdModulesIndexRouteImport.update({
+    id: '/classes/$classId/modules/',
+    path: '/classes/$classId/modules/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ClassesClassIdAssignmentsIndexRoute =
+  ClassesClassIdAssignmentsIndexRouteImport.update({
+    id: '/classes/$classId/assignments/',
+    path: '/classes/$classId/assignments/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ClassesClassIdAssignmentsAssignmentIdIndexRoute =
+  ClassesClassIdAssignmentsAssignmentIdIndexRouteImport.update({
+    id: '/classes/$classId/assignments/$assignmentId/',
+    path: '/classes/$classId/assignments/$assignmentId/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/success': typeof SuccessRoute
+  '/classes/': typeof ClassesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/canvas-sync/$action': typeof ApiCanvasSyncActionRoute
+  '/classes/$classId/': typeof ClassesClassIdIndexRoute
+  '/classes/$classId/assignments/': typeof ClassesClassIdAssignmentsIndexRoute
+  '/classes/$classId/modules/': typeof ClassesClassIdModulesIndexRoute
+  '/classes/$classId/assignments/$assignmentId/': typeof ClassesClassIdAssignmentsAssignmentIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/success': typeof SuccessRoute
+  '/classes': typeof ClassesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/canvas-sync/$action': typeof ApiCanvasSyncActionRoute
+  '/classes/$classId': typeof ClassesClassIdIndexRoute
+  '/classes/$classId/assignments': typeof ClassesClassIdAssignmentsIndexRoute
+  '/classes/$classId/modules': typeof ClassesClassIdModulesIndexRoute
+  '/classes/$classId/assignments/$assignmentId': typeof ClassesClassIdAssignmentsAssignmentIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,14 +112,54 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/success': typeof SuccessRoute
+  '/classes/': typeof ClassesIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/canvas-sync/$action': typeof ApiCanvasSyncActionRoute
+  '/classes/$classId/': typeof ClassesClassIdIndexRoute
+  '/classes/$classId/assignments/': typeof ClassesClassIdAssignmentsIndexRoute
+  '/classes/$classId/modules/': typeof ClassesClassIdModulesIndexRoute
+  '/classes/$classId/assignments/$assignmentId/': typeof ClassesClassIdAssignmentsAssignmentIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/success' | '/api/auth/$'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/success'
+    | '/classes/'
+    | '/api/auth/$'
+    | '/api/canvas-sync/$action'
+    | '/classes/$classId/'
+    | '/classes/$classId/assignments/'
+    | '/classes/$classId/modules/'
+    | '/classes/$classId/assignments/$assignmentId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/success' | '/api/auth/$'
-  id: '__root__' | '/' | '/dashboard' | '/login' | '/success' | '/api/auth/$'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/success'
+    | '/classes'
+    | '/api/auth/$'
+    | '/api/canvas-sync/$action'
+    | '/classes/$classId'
+    | '/classes/$classId/assignments'
+    | '/classes/$classId/modules'
+    | '/classes/$classId/assignments/$assignmentId'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/success'
+    | '/classes/'
+    | '/api/auth/$'
+    | '/api/canvas-sync/$action'
+    | '/classes/$classId/'
+    | '/classes/$classId/assignments/'
+    | '/classes/$classId/modules/'
+    | '/classes/$classId/assignments/$assignmentId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,7 +167,13 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   SuccessRoute: typeof SuccessRoute
+  ClassesIndexRoute: typeof ClassesIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCanvasSyncActionRoute: typeof ApiCanvasSyncActionRoute
+  ClassesClassIdIndexRoute: typeof ClassesClassIdIndexRoute
+  ClassesClassIdAssignmentsIndexRoute: typeof ClassesClassIdAssignmentsIndexRoute
+  ClassesClassIdModulesIndexRoute: typeof ClassesClassIdModulesIndexRoute
+  ClassesClassIdAssignmentsAssignmentIdIndexRoute: typeof ClassesClassIdAssignmentsAssignmentIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -109,11 +206,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/classes/': {
+      id: '/classes/'
+      path: '/classes'
+      fullPath: '/classes/'
+      preLoaderRoute: typeof ClassesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/classes/$classId/': {
+      id: '/classes/$classId/'
+      path: '/classes/$classId'
+      fullPath: '/classes/$classId/'
+      preLoaderRoute: typeof ClassesClassIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/canvas-sync/$action': {
+      id: '/api/canvas-sync/$action'
+      path: '/api/canvas-sync/$action'
+      fullPath: '/api/canvas-sync/$action'
+      preLoaderRoute: typeof ApiCanvasSyncActionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/classes/$classId/modules/': {
+      id: '/classes/$classId/modules/'
+      path: '/classes/$classId/modules'
+      fullPath: '/classes/$classId/modules/'
+      preLoaderRoute: typeof ClassesClassIdModulesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/classes/$classId/assignments/': {
+      id: '/classes/$classId/assignments/'
+      path: '/classes/$classId/assignments'
+      fullPath: '/classes/$classId/assignments/'
+      preLoaderRoute: typeof ClassesClassIdAssignmentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/classes/$classId/assignments/$assignmentId/': {
+      id: '/classes/$classId/assignments/$assignmentId/'
+      path: '/classes/$classId/assignments/$assignmentId'
+      fullPath: '/classes/$classId/assignments/$assignmentId/'
+      preLoaderRoute: typeof ClassesClassIdAssignmentsAssignmentIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -124,7 +263,14 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   SuccessRoute: SuccessRoute,
+  ClassesIndexRoute: ClassesIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCanvasSyncActionRoute: ApiCanvasSyncActionRoute,
+  ClassesClassIdIndexRoute: ClassesClassIdIndexRoute,
+  ClassesClassIdAssignmentsIndexRoute: ClassesClassIdAssignmentsIndexRoute,
+  ClassesClassIdModulesIndexRoute: ClassesClassIdModulesIndexRoute,
+  ClassesClassIdAssignmentsAssignmentIdIndexRoute:
+    ClassesClassIdAssignmentsAssignmentIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

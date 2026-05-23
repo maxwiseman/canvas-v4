@@ -1,53 +1,75 @@
+import {
+	SidebarInset,
+	SidebarProvider,
+} from "@canvas-v4/ui/components/sidebar";
 import { Toaster } from "@canvas-v4/ui/components/sonner";
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import { TooltipProvider } from "@canvas-v4/ui/components/tooltip";
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Outlet,
+	Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-
-import Header from "../components/header";
+import { AppSidebar } from "@/components/app-sidebar";
 
 import appCss from "../index.css?url";
+// import Header from "../components/header";
+import { CanvasDataProvider } from "../lib/canvas/provider";
 
-export interface RouterAppContext {}
+export type RouterAppContext = {};
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
-  head: () => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "My App",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
+	head: () => ({
+		meta: [
+			{
+				charSet: "utf-8",
+			},
+			{
+				name: "viewport",
+				content: "width=device-width, initial-scale=1",
+			},
+			{
+				title: "My App",
+			},
+		],
+		links: [
+			{
+				rel: "stylesheet",
+				href: appCss,
+			},
+		],
+	}),
 
-  component: RootDocument,
+	component: RootDocument,
 });
 
 function RootDocument() {
-  return (
-    <html lang="en" className="dark">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <div className="grid h-svh grid-rows-[auto_1fr]">
-          <Header />
-          <Outlet />
-        </div>
-        <Toaster richColors />
-        <TanStackRouterDevtools position="bottom-left" />
-        <Scripts />
-      </body>
-    </html>
-  );
+	return (
+		<html className="overscroll-none antialiased" lang="en">
+			<head>
+				<HeadContent />
+			</head>
+			<body>
+				<CanvasDataProvider>
+					<TooltipProvider>
+						<SidebarProvider>
+							<AppSidebar />
+							<SidebarInset className="overflow-clip">
+								{/*<Header />*/}
+								<div className="relative size-full">
+									<div className="absolute size-full overflow-scroll *:p-1">
+										<Outlet />
+									</div>
+								</div>
+							</SidebarInset>
+						</SidebarProvider>
+					</TooltipProvider>
+				</CanvasDataProvider>
+				<Toaster richColors />
+				<TanStackRouterDevtools position="bottom-left" />
+				<Scripts />
+			</body>
+		</html>
+	);
 }

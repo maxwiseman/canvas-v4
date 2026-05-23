@@ -12,6 +12,7 @@ import { Skeleton } from "@canvas-v4/ui/components/skeleton";
 import { Link, useNavigate } from "@tanstack/react-router";
 
 import { authClient } from "@/lib/auth-client";
+import { clearCanvasSnapshot, clearMutationQueue } from "@/lib/canvas/indexed-db";
 
 export default function UserMenu() {
   const navigate = useNavigate();
@@ -42,9 +43,11 @@ export default function UserMenu() {
           <DropdownMenuItem
             variant="destructive"
             onClick={() => {
+              const userId = session.user.id;
               authClient.signOut({
                 fetchOptions: {
-                  onSuccess: () => {
+                  onSuccess: async () => {
+                    await Promise.all([clearCanvasSnapshot(userId), clearMutationQueue(userId)]);
                     navigate({
                       to: "/",
                     });

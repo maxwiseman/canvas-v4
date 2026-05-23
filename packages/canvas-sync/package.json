@@ -1,0 +1,24 @@
+{
+  "name": "@canvas-v4/canvas-sync",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@canvas-v4/canvas-sdk": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@canvas-v4/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
