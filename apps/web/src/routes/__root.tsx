@@ -58,7 +58,7 @@ function RootDocument() {
 							<SidebarInset className="overflow-clip">
 								{/*<Header />*/}
 								<div className="relative size-full">
-									<div className="absolute size-full overflow-scroll *:p-1">
+									<div className="absolute size-full overflow-scroll p-1">
 										<Outlet />
 									</div>
 								</div>
@@ -67,7 +67,7 @@ function RootDocument() {
 					</TooltipProvider>
 				</CanvasDataProvider>
 				<Toaster richColors />
-				<TanStackRouterDevtools position="bottom-left" />
+				<TanStackRouterDevtools position="bottom-right" />
 				<Scripts />
 			</body>
 		</html>

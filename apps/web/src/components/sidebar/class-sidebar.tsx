@@ -14,10 +14,10 @@ import { canvas } from "@/lib/canvas";
 export function ClassSidebar({ onBack }: { onBack: () => void }) {
 	const params = useParams({ strict: false }) as { classId?: string };
 	const classId = params.classId;
+	const { course } = canvas.courses.useGet(classId);
 
 	if (!classId) return null;
 
-	const { course } = canvas.courses.useGet(classId);
 	if (!course) return <div>Loading...</div>;
 
 	return (
@@ -32,7 +32,11 @@ export function ClassSidebar({ onBack }: { onBack: () => void }) {
 				<LayoutGrid />
 				Overview
 			</SidebarMenuButton>
-			<SidebarMenuButton>
+			<SidebarMenuButton
+				render={
+					<Link to="/classes/$classId/announcements" params={{ classId }} />
+				}
+			>
 				<Megaphone />
 				Announcements
 			</SidebarMenuButton>

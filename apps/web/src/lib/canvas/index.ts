@@ -5,6 +5,7 @@ export {
   useCalendarEvents,
   useCanvasMutationQueue,
   useCourse,
+  useCourseAnnouncements,
   useCourseAssignments,
   useCourseModules,
   useCourses,

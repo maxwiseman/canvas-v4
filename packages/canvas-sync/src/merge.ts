@@ -36,6 +36,7 @@ export function createEmptyManifest(): SyncManifest {
       assignmentDetails: {},
       submissions: {},
       modules: {},
+      announcements: {},
     },
     updatedAt: new Date(0).toISOString(),
   };
@@ -109,6 +110,7 @@ function updateManifest(manifest: SyncManifest, envelope: CanvasEnvelope): SyncM
       assignmentDetails: { ...manifest.hydratedScopes.assignmentDetails },
       submissions: { ...manifest.hydratedScopes.submissions },
       modules: { ...manifest.hydratedScopes.modules },
+      announcements: { ...(manifest.hydratedScopes.announcements ?? {}) },
     },
     updatedAt: envelope.syncMeta.fetchedAt,
   };
@@ -124,6 +126,10 @@ function updateManifest(manifest: SyncManifest, envelope: CanvasEnvelope): SyncM
   if (envelope.syncMeta.scope.startsWith("assignment:")) {
     const [, courseId, assignmentId] = envelope.syncMeta.scope.split(":");
     if (courseId && assignmentId) next.hydratedScopes.assignmentDetails[`${courseId}:${assignmentId}`] = stamp;
+  }
+  if (envelope.syncMeta.scope.startsWith("announcements:")) {
+    const courseId = envelope.syncMeta.scope.split(":")[1];
+    if (courseId) next.hydratedScopes.announcements[courseId] = stamp;
   }
 
   return next;

@@ -73,11 +73,15 @@ export function useCourse(courseId: string | undefined, options: CanvasAutoSyncO
   const staleMs = options.staleMs ?? DEFAULT_STALE_MS;
   const course = courseId ? canvas.courses.get(courseId) : undefined;
   const stamp = courseId ? canvas.snapshot.syncManifest[0]?.hydratedScopes.courseAssignments[courseId] : undefined;
+  const syncScope = `course:${courseId}`;
+  const error = useMemo(() => getLatestSyncError(canvas, syncScope), [canvas, syncScope]);
+  const hasAttemptedLoad = Boolean(stamp || error);
   const isMissing = Boolean(courseId && !course);
   const isStale = Boolean(courseId && revalidateIfStale && isScopeStale(stamp, staleMs));
+  const shouldRefresh = enabled && Boolean(courseId) && ((isMissing && !hasAttemptedLoad) || isStale);
   const isRefreshing = useMemo(
-    () => canvas.snapshot.syncJobs.some((job) => job.status === "running" && job.scope === `course:${courseId}`),
-    [canvas.snapshot.syncJobs, courseId],
+    () => canvas.snapshot.syncJobs.some((job) => job.status === "running" && job.scope === syncScope),
+    [canvas.snapshot.syncJobs, syncScope],
   );
   const refresh = useCallback(async () => {
     if (!courseId) return;
@@ -85,7 +89,7 @@ export function useCourse(courseId: string | undefined, options: CanvasAutoSyncO
   }, [canvas.sync, courseId]);
 
   useAutoRefresh({
-    enabled: enabled && Boolean(courseId) && (isMissing || isStale),
+    enabled: shouldRefresh,
     refresh,
     refreshKey: `course:${courseId}`,
   });
@@ -93,6 +97,8 @@ export function useCourse(courseId: string | undefined, options: CanvasAutoSyncO
   return {
     course,
     data: course,
+    error,
+    hasAttemptedLoad,
     isMissing,
     isRefreshing,
     isStale,
@@ -203,6 +209,40 @@ export function useCourseModules(courseId: string | undefined, options: CanvasAu
     isStale,
     moduleItems,
     modules,
+    refresh,
+  };
+}
+
+export function useCourseAnnouncements(courseId: string | undefined, options: CanvasAutoSyncOptions = {}) {
+  const canvas = useCanvasData();
+  const enabled = options.enabled ?? true;
+  const revalidateIfStale = options.revalidateIfStale ?? true;
+  const staleMs = options.staleMs ?? DEFAULT_STALE_MS;
+  const announcements = courseId ? canvas.announcements.listByCourse(courseId) : [];
+  const stamp = courseId ? canvas.snapshot.syncManifest[0]?.hydratedScopes.announcements?.[courseId] : undefined;
+  const isMissing = Boolean(courseId && announcements.length === 0);
+  const isStale = Boolean(courseId && revalidateIfStale && isScopeStale(stamp, staleMs));
+  const isRefreshing = useMemo(
+    () => canvas.snapshot.syncJobs.some((job) => job.status === "running" && job.scope === `announcements:${courseId}`),
+    [canvas.snapshot.syncJobs, courseId],
+  );
+  const refresh = useCallback(async () => {
+    if (!courseId) return;
+    await canvas.sync.courseAnnouncements(courseId);
+  }, [canvas.sync, courseId]);
+
+  useAutoRefresh({
+    enabled: enabled && Boolean(courseId) && (isMissing || isStale),
+    refresh,
+    refreshKey: `announcements:${courseId}`,
+  });
+
+  return {
+    announcements,
+    data: announcements,
+    isMissing,
+    isRefreshing,
+    isStale,
     refresh,
   };
 }
@@ -448,6 +488,9 @@ export const canvas = {
   modules: {
     useListByCourse: useCourseModules,
   },
+  announcements: {
+    useListByCourse: useCourseAnnouncements,
+  },
   moduleItems: {
     useListByModule: useModuleItemsByModule,
   },
@@ -487,4 +530,8 @@ function useAutoRefresh({
 
 function isSyncRunning(canvas: ReturnType<typeof useCanvasData>, scope: string): boolean {
   return canvas.snapshot.syncJobs.some((job) => job.status === "running" && job.scope === scope);
+}
+
+function getLatestSyncError(canvas: ReturnType<typeof useCanvasData>, scope: string) {
+  return canvas.snapshot.syncErrors.find((error) => error.scope === scope);
 }

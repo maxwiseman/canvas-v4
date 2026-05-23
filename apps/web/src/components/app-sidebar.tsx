@@ -1,6 +1,7 @@
 import {
 	Sidebar,
 	SidebarContent,
+	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarGroupLabel,
@@ -8,15 +9,12 @@ import {
 	SidebarMenuItem,
 } from "@canvas-v4/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
-import {
-	GraduationCap,
-	Home,
-	MessageCircle,
-} from "lucide-react";
+import { GraduationCap, Home, MessageCircle, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { canvas } from "@/lib/canvas";
 import { ClassSidebar } from "./sidebar/class-sidebar";
+import UserMenu from "./user-menu";
 
 export function AppSidebar() {
 	const [hasGoneBack, setHasGoneBack] = useState(false);
@@ -39,11 +37,23 @@ export function AppSidebar() {
 							className="flex flex-col gap-2"
 						>
 							<SidebarMenuItem>
-								<SidebarMenuButton onClick={() => setHasGoneBack(false)}>
+								<SidebarMenuButton
+									onClick={() => setHasGoneBack(false)}
+									render={<Link to="/" />}
+								>
 									<Home />
 									Home
 								</SidebarMenuButton>
 							</SidebarMenuItem>
+							{/*<SidebarMenuItem>
+								<SidebarMenuButton
+									onClick={() => setHasGoneBack(false)}
+									render={<Link to="/settings" />}
+								>
+									<Settings />
+									Settings
+								</SidebarMenuButton>
+							</SidebarMenuItem>*/}
 							<SidebarMenuItem>
 								<SidebarMenuButton onClick={() => setHasGoneBack(false)}>
 									<MessageCircle />
@@ -98,6 +108,9 @@ export function AppSidebar() {
 					)}
 				</AnimatePresence>
 			</SidebarContent>
+			<SidebarFooter>
+				<UserMenu />
+			</SidebarFooter>
 		</Sidebar>
 	);
 }

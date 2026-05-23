@@ -21,6 +21,7 @@ import {
   getCanvasBootstrap,
   syncAssignmentDetail,
   syncCanvasDashboard,
+  syncCourseAnnouncements,
   syncCourseBasics,
   syncCourseModules,
 } from "@/lib/canvas/api-client";
@@ -45,6 +46,7 @@ import {
   getAssignment,
   listCourses,
   listAssignmentGroupsByCourse,
+  listAnnouncementsByCourse,
   listCalendarEvents,
   listEnrollmentsByCourse,
   listModuleItemsByCourse,
@@ -55,7 +57,7 @@ import {
 } from "@/lib/canvas/selectors";
 import { authClient } from "@/lib/auth-client";
 
-type SyncAction = "bootstrap" | "dashboard" | "course" | "modules" | "assignment";
+type SyncAction = "bootstrap" | "dashboard" | "course" | "modules" | "announcements" | "assignment";
 
 export interface CanvasDataClient {
   hydrated: boolean;
@@ -82,6 +84,9 @@ export interface CanvasDataClient {
   modules: {
     listByCourse: (courseId: string) => ReturnType<typeof listModulesByCourse>;
   };
+  announcements: {
+    listByCourse: (courseId: string) => ReturnType<typeof listAnnouncementsByCourse>;
+  };
   moduleItems: {
     listByCourse: (courseId: string) => ReturnType<typeof listModuleItemsByCourse>;
     listByModule: (courseId: string, moduleId: string | number) => ReturnType<typeof listModuleItemsByModule>;
@@ -97,6 +102,7 @@ export interface CanvasDataClient {
     dashboard: () => Promise<void>;
     courseBasics: (courseId: string) => Promise<void>;
     courseModules: (courseId: string) => Promise<void>;
+    courseAnnouncements: (courseId: string) => Promise<void>;
     assignmentDetail: (courseId: string, assignmentId: string | number) => Promise<void>;
   };
   mutations: {
@@ -209,6 +215,8 @@ export function CanvasDataProvider({ children }: { children: ReactNode }) {
               ? await syncCanvasDashboard()
               : action === "assignment"
                 ? await syncAssignmentDetail({ courseId: courseId ?? "", assignmentId: String(entityId ?? "") })
+                : action === "announcements"
+                  ? await syncCourseAnnouncements({ courseId: courseId ?? "" })
                 : action === "modules"
                   ? await syncCourseModules({ courseId: courseId ?? "" })
                   : await syncCourseBasics({ courseId: courseId ?? "" });
@@ -327,6 +335,9 @@ export function CanvasDataProvider({ children }: { children: ReactNode }) {
       modules: {
         listByCourse: (courseId) => listModulesByCourse(snapshot, courseId),
       },
+      announcements: {
+        listByCourse: (courseId) => listAnnouncementsByCourse(snapshot, courseId),
+      },
       moduleItems: {
         listByCourse: (courseId) => listModuleItemsByCourse(snapshot, courseId),
         listByModule: (courseId, moduleId) => listModuleItemsByModule(snapshot, courseId, moduleId),
@@ -342,6 +353,7 @@ export function CanvasDataProvider({ children }: { children: ReactNode }) {
         dashboard: () => runSync("dashboard"),
         courseBasics: (courseId) => runSync("course", courseId),
         courseModules: (courseId) => runSync("modules", courseId),
+        courseAnnouncements: (courseId) => runSync("announcements", courseId),
         assignmentDetail: (courseId, assignmentId) => runSync("assignment", courseId, assignmentId),
       },
       mutations: {

@@ -22,6 +22,13 @@ export async function syncCourseModules(data: { courseId: string }): Promise<Can
   });
 }
 
+export async function syncCourseAnnouncements(data: { courseId: string }): Promise<CanvasEnvelope> {
+  return fetchCanvasEnvelope("/api/canvas-sync/announcements", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
 export async function syncAssignmentDetail(data: { courseId: string; assignmentId: string }): Promise<CanvasEnvelope> {
   return fetchCanvasEnvelope("/api/canvas-sync/assignment", {
     method: "POST",

@@ -5,6 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { eq } from "drizzle-orm";
 
 import { getCanvasSettings } from "@/lib/server/canvas-settings";
+import { encryptSecret } from "@/lib/server/encryption";
 
 export const Route = createFileRoute("/api/canvas-settings")({
   server: {
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/api/canvas-settings")({
         const domain = normalizeDomain(readString(body, "domain"));
         const accessToken = readString(body, "accessToken");
         const existing = await getCanvasSettings(session.user.id);
-        const nextToken = accessToken || existing?.accessToken;
+        const nextToken = accessToken ? encryptSecret(accessToken) : existing?.accessToken;
 
         if (!domain) return json({ error: "Canvas domain is required." }, 400);
         if (!nextToken) return json({ error: "Canvas access token is required." }, 400);

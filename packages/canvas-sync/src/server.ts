@@ -2,6 +2,7 @@ import { createCanvasGateway } from "./gateway";
 import {
   normalizeAssignment,
   normalizeAssignmentGroup,
+  normalizeAnnouncement,
   normalizeCalendarEvent,
   normalizeCourse,
   normalizeEnrollment,
@@ -157,10 +158,11 @@ export async function syncCourseBasicsEnvelope(options: CanvasServerSyncOptions,
   return withCanvasErrors(`course:${courseId}`, async () => {
     const gateway = createCanvasGateway(options);
     const fetchedAt = new Date().toISOString();
-    const [course, groups, assignments, submissions] = await Promise.all([
-      gateway.run({ key: `course:${courseId}`, priority: "visible", scope: `course:${courseId}` }, (canvas) =>
+    const course = await gateway.run({ key: `course:${courseId}`, priority: "visible", scope: `course:${courseId}` }, (canvas) =>
         canvas.courses.retrieve(Number(courseId), { include: ["term", "teachers"] }),
-      ),
+    );
+
+    const [groupsResult, assignmentsResult, submissionsResult] = await Promise.allSettled([
       gateway.run({ key: `assignment-groups:${courseId}`, priority: "background", scope: `course:${courseId}` }, (canvas) =>
         canvas.courses.assignmentGroups(Number(courseId)).all(),
       ),
@@ -171,6 +173,14 @@ export async function syncCourseBasicsEnvelope(options: CanvasServerSyncOptions,
         canvas.courses.submissions(Number(courseId)).listForStudent({ include: ["submission_comments"] }).all(),
       ),
     ]);
+    const groups = groupsResult.status === "fulfilled" ? groupsResult.value : [];
+    const assignments = assignmentsResult.status === "fulfilled" ? assignmentsResult.value : [];
+    const submissions = submissionsResult.status === "fulfilled" ? submissionsResult.value : [];
+    const errors = [
+      groupsResult.status === "rejected" ? canvasErrorFromUnknown(groupsResult.reason, `assignment-groups:${courseId}`) : undefined,
+      assignmentsResult.status === "rejected" ? canvasErrorFromUnknown(assignmentsResult.reason, `assignments:${courseId}`) : undefined,
+      submissionsResult.status === "rejected" ? canvasErrorFromUnknown(submissionsResult.reason, `submissions:${courseId}`) : undefined,
+    ].filter((error): error is CanvasSyncError => Boolean(error));
 
     return {
       courses: [normalizeCourse(course, fetchedAt)],
@@ -181,6 +191,7 @@ export async function syncCourseBasicsEnvelope(options: CanvasServerSyncOptions,
         scope: `course:${courseId}`,
         fetchedAt,
         source: "canvas",
+        ...(errors.length > 0 ? { errors } : {}),
       },
     };
   });
@@ -203,6 +214,26 @@ export async function syncCourseModulesEnvelope(options: CanvasServerSyncOptions
       moduleItems,
       syncMeta: {
         scope: `modules:${courseId}`,
+        fetchedAt,
+        source: "canvas",
+      },
+    };
+  });
+}
+
+export async function syncCourseAnnouncementsEnvelope(options: CanvasServerSyncOptions, courseId: string): Promise<CanvasEnvelope> {
+  return withCanvasErrors(`announcements:${courseId}`, async () => {
+    const gateway = createCanvasGateway(options);
+    const fetchedAt = new Date().toISOString();
+    const announcements = await gateway.run(
+      { key: `announcements:${courseId}`, priority: "background", scope: `announcements:${courseId}` },
+      (canvas) => canvas.courses.announcements(Number(courseId)).list({ active_only: true }).all(),
+    );
+
+    return {
+      announcements: announcements.map((announcement) => normalizeAnnouncement(announcement, fetchedAt, courseId)),
+      syncMeta: {
+        scope: `announcements:${courseId}`,
         fetchedAt,
         source: "canvas",
       },

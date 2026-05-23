@@ -1,6 +1,7 @@
 import type {
   CanvasAssignment,
   CanvasAssignmentGroup,
+  CanvasAnnouncement,
   CanvasCalendarEvent,
   CanvasCourse,
   CanvasDebugSnapshot,
@@ -86,6 +87,12 @@ export function listModuleItemsByModule(
   moduleId: string | number,
 ): CanvasModuleItem[] {
   return listModuleItemsByCourse(snapshot, courseId).filter((item) => String(item.module_id) === String(moduleId));
+}
+
+export function listAnnouncementsByCourse(snapshot: CanvasDebugSnapshot, courseId: string): CanvasAnnouncement[] {
+  return snapshot.announcements
+    .filter((announcement) => announcement.sync.courseId === courseId)
+    .sort((a, b) => String(b.posted_at ?? "").localeCompare(String(a.posted_at ?? "")));
 }
 
 export function listTodos(snapshot: CanvasDebugSnapshot): CanvasTodo[] {

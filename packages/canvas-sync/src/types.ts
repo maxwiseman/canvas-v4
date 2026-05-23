@@ -106,6 +106,7 @@ export interface SyncManifest {
     assignmentDetails: Record<string, SyncStamp>;
     submissions: Record<string, SyncStamp>;
     modules: Record<string, SyncStamp>;
+    announcements: Record<string, SyncStamp>;
   };
   updatedAt: string;
 }

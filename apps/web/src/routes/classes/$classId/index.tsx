@@ -7,15 +7,31 @@ export const Route = createFileRoute("/classes/$classId/")({
 
 function RouteComponent() {
 	const classId = Route.useParams().classId;
-	const { course, isRefreshing: isCourseRefreshing } =
+	const {
+		course,
+		error: courseError,
+		hasAttemptedLoad,
+		isRefreshing: isCourseRefreshing,
+	} =
 		canvas.courses.useGet(classId);
 	const { modules, isRefreshing: areModulesRefreshing } =
-		canvas.modules.useListByCourse(classId);
-	const { assignments } = canvas.assignments.useListByCourse(classId);
+		canvas.modules.useListByCourse(classId, { enabled: Boolean(course) });
+	const { assignments } = canvas.assignments.useListByCourse(classId, {
+		enabled: Boolean(course),
+	});
 
 	if (!course) {
+		if (isCourseRefreshing || !hasAttemptedLoad) {
+			return <div>Loading course...</div>;
+		}
+
 		return (
-			<div>{isCourseRefreshing ? "Loading course..." : "Course not found"}</div>
+			<div>
+				<h1>Course not found</h1>
+				{courseError ? (
+					<p className="text-muted-foreground">{courseError.message}</p>
+				) : null}
+			</div>
 		);
 	}
 
