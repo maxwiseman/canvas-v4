@@ -9,13 +9,14 @@
     "CORS_ORIGIN",
     "DATABASE_URL",
     "CANVAS_DOMAIN",
-    "CANVAS_ACCESS_TOKEN"
+    "CANVAS_ACCESS_TOKEN",
+    "VERCEL"
   ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", ".output/**", ".vercel/output/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
