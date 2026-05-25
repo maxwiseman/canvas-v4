@@ -27,3 +27,22 @@ When making architectural choices, prefer a client-heavy workspace model optimiz
 - type-safe client/server boundaries
 
 Do not optimize this like a marketing site. Optimize it like a productivity app that students keep open all day.
+
+# Mutation Workflow
+
+All user-initiated mutations should go through a single local mutation queue rather than ad hoc request state. The queue should be durable in IndexedDB and shared across Canvas-backed mutations and app-owned data mutations so the app can grow toward offline support without redesigning write paths later.
+
+Mutation behavior should be optimistic by default:
+
+- Apply the expected result to the normalized local cache immediately.
+- Persist the queued/pushing mutation with enough payload to retry or inspect it.
+- Reflect the optimistic state in every screen that reads the affected normalized entity.
+- Acknowledge the queued mutation when the server succeeds and merge the server response back into the cache.
+- If the server fails, mark the mutation as errored and roll back only if a newer mutation has not superseded it.
+- Avoid awaiting the network before closing menus, popovers, dialogs, or other transient UI controls.
+
+Use the existing Canvas data provider and mutation queue primitives as the default place to add this behavior. If a new mutation type needs special conflict handling, keep that logic near the queue/apply layer instead of scattering it through UI components.
+
+# Database Workflow
+
+When making database schema changes, do not generate migrations by default. It is fine to apply schema changes directly with `bun run db:push`.

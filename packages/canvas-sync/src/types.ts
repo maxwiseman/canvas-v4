@@ -1,33 +1,33 @@
 import type {
-  Announcement,
-  Assignment,
-  AssignmentGroup,
-  CalendarEvent,
-  Course,
-  Enrollment,
-  Module,
-  ModuleItem,
-  Page,
-  Submission,
-  TodoItem,
-  User,
-  UserProfile,
+	Announcement,
+	Assignment,
+	AssignmentGroup,
+	CalendarEvent,
+	Course,
+	Enrollment,
+	Module,
+	ModuleItem,
+	Page,
+	Submission,
+	TodoItem,
+	User,
+	UserProfile,
 } from "@canvas-v4/canvas-sdk";
 
-export type CanvasSyncSource = "canvas";
+export type CanvasSyncSource = "app" | "canvas";
 export type CanvasSyncPriority = "visible" | "background" | "idle";
 
 export interface CanvasEntityMeta {
-  id: string;
-  canvasId: string;
-  fetchedAt: string;
-  source: CanvasSyncSource;
-  courseId?: string;
-  shapes?: Record<string, string>;
+	id: string;
+	canvasId: string;
+	fetchedAt: string;
+	source: CanvasSyncSource;
+	courseId?: string;
+	shapes?: Record<string, string>;
 }
 
 export type CanvasEntity<T extends object> = T & {
-  sync: CanvasEntityMeta;
+	sync: CanvasEntityMeta;
 };
 
 export type CanvasUser = CanvasEntity<User | UserProfile>;
@@ -43,140 +43,158 @@ export type CanvasAnnouncement = CanvasEntity<Announcement>;
 export type CanvasCalendarEvent = CanvasEntity<CalendarEvent>;
 export type CanvasTodo = CanvasEntity<TodoItem>;
 
+export interface CanvasCourseOverlay {
+	id: string;
+	userId: string;
+	canvasCourseId: string;
+	icon: string | null;
+	createdAt: string;
+	updatedAt: string;
+	sync: CanvasEntityMeta & {
+		source: "app";
+		courseId: string;
+	};
+}
+
 export interface CanvasSyncError {
-  id: string;
-  scope: string;
-  message: string;
-  status?: number;
-  retryAfterMs?: number;
-  occurredAt: string;
+	id: string;
+	scope: string;
+	message: string;
+	status?: number;
+	retryAfterMs?: number;
+	occurredAt: string;
 }
 
 export interface CanvasEnvelope {
-  users?: CanvasUser[];
-  courses?: CanvasCourse[];
-  enrollments?: CanvasEnrollment[];
-  assignments?: CanvasAssignment[];
-  submissions?: CanvasSubmission[];
-  assignmentGroups?: CanvasAssignmentGroup[];
-  modules?: CanvasModule[];
-  moduleItems?: CanvasModuleItem[];
-  pages?: CanvasPage[];
-  announcements?: CanvasAnnouncement[];
-  calendarEvents?: CanvasCalendarEvent[];
-  canvasTodos?: CanvasTodo[];
-  syncMeta: {
-    scope: string;
-    fetchedAt: string;
-    source: CanvasSyncSource;
-    errors?: CanvasSyncError[];
-  };
+	users?: CanvasUser[];
+	courses?: CanvasCourse[];
+	enrollments?: CanvasEnrollment[];
+	assignments?: CanvasAssignment[];
+	submissions?: CanvasSubmission[];
+	assignmentGroups?: CanvasAssignmentGroup[];
+	modules?: CanvasModule[];
+	moduleItems?: CanvasModuleItem[];
+	pages?: CanvasPage[];
+	announcements?: CanvasAnnouncement[];
+	calendarEvents?: CanvasCalendarEvent[];
+	canvasTodos?: CanvasTodo[];
+	courseOverlays?: CanvasCourseOverlay[];
+	syncMeta: {
+		scope: string;
+		fetchedAt: string;
+		source: CanvasSyncSource;
+		errors?: CanvasSyncError[];
+	};
 }
 
 export type CanvasCollectionName =
-  | "users"
-  | "courses"
-  | "enrollments"
-  | "assignments"
-  | "submissions"
-  | "assignmentGroups"
-  | "modules"
-  | "moduleItems"
-  | "pages"
-  | "announcements"
-  | "calendarEvents"
-  | "canvasTodos"
-  | "syncJobs"
-  | "syncErrors"
-  | "syncManifest";
+	| "users"
+	| "courses"
+	| "enrollments"
+	| "assignments"
+	| "submissions"
+	| "assignmentGroups"
+	| "modules"
+	| "moduleItems"
+	| "pages"
+	| "announcements"
+	| "calendarEvents"
+	| "canvasTodos"
+	| "courseOverlays"
+	| "syncJobs"
+	| "syncErrors"
+	| "syncManifest";
 
 export interface SyncStamp {
-  fetchedAt: string;
-  source: CanvasSyncSource;
-  errorCount?: number;
+	fetchedAt: string;
+	source: CanvasSyncSource;
+	errorCount?: number;
 }
 
 export interface SyncManifest {
-  id: "manifest";
-  userId?: string;
-  activeCourseIds: string[];
-  hydratedScopes: {
-    dashboard?: SyncStamp;
-    courseAssignments: Record<string, SyncStamp>;
-    assignmentDetails: Record<string, SyncStamp>;
-    submissions: Record<string, SyncStamp>;
-    modules: Record<string, SyncStamp>;
-    announcements: Record<string, SyncStamp>;
-  };
-  updatedAt: string;
+	id: "manifest";
+	userId?: string;
+	activeCourseIds: string[];
+	hydratedScopes: {
+		dashboard?: SyncStamp;
+		courseAssignments: Record<string, SyncStamp>;
+		assignmentDetails: Record<string, SyncStamp>;
+		submissions: Record<string, SyncStamp>;
+		modules: Record<string, SyncStamp>;
+		announcements: Record<string, SyncStamp>;
+	};
+	updatedAt: string;
 }
 
 export interface CanvasSyncJob {
-  id: string;
-  scope: string;
-  priority: CanvasSyncPriority;
-  status: "queued" | "running" | "success" | "error";
-  startedAt?: string;
-  finishedAt?: string;
-  message?: string;
+	id: string;
+	scope: string;
+	priority: CanvasSyncPriority;
+	status: "queued" | "running" | "success" | "error";
+	startedAt?: string;
+	finishedAt?: string;
+	message?: string;
 }
 
 export interface CanvasDebugSnapshot {
-  users: CanvasUser[];
-  courses: CanvasCourse[];
-  enrollments: CanvasEnrollment[];
-  assignments: CanvasAssignment[];
-  submissions: CanvasSubmission[];
-  assignmentGroups: CanvasAssignmentGroup[];
-  modules: CanvasModule[];
-  moduleItems: CanvasModuleItem[];
-  pages: CanvasPage[];
-  announcements: CanvasAnnouncement[];
-  calendarEvents: CanvasCalendarEvent[];
-  canvasTodos: CanvasTodo[];
-  syncJobs: CanvasSyncJob[];
-  syncErrors: CanvasSyncError[];
-  syncManifest: SyncManifest[];
+	users: CanvasUser[];
+	courses: CanvasCourse[];
+	enrollments: CanvasEnrollment[];
+	assignments: CanvasAssignment[];
+	submissions: CanvasSubmission[];
+	assignmentGroups: CanvasAssignmentGroup[];
+	modules: CanvasModule[];
+	moduleItems: CanvasModuleItem[];
+	pages: CanvasPage[];
+	announcements: CanvasAnnouncement[];
+	calendarEvents: CanvasCalendarEvent[];
+	canvasTodos: CanvasTodo[];
+	courseOverlays: CanvasCourseOverlay[];
+	syncJobs: CanvasSyncJob[];
+	syncErrors: CanvasSyncError[];
+	syncManifest: SyncManifest[];
 }
 
 export type CanvasEntityCollectionName = Exclude<
-  CanvasCollectionName,
-  "syncJobs" | "syncErrors" | "syncManifest"
+	CanvasCollectionName,
+	"syncJobs" | "syncErrors" | "syncManifest"
 >;
 
 export type CanvasEntityByCollection = {
-  users: CanvasUser;
-  courses: CanvasCourse;
-  enrollments: CanvasEnrollment;
-  assignments: CanvasAssignment;
-  submissions: CanvasSubmission;
-  assignmentGroups: CanvasAssignmentGroup;
-  modules: CanvasModule;
-  moduleItems: CanvasModuleItem;
-  pages: CanvasPage;
-  announcements: CanvasAnnouncement;
-  calendarEvents: CanvasCalendarEvent;
-  canvasTodos: CanvasTodo;
+	users: CanvasUser;
+	courses: CanvasCourse;
+	enrollments: CanvasEnrollment;
+	assignments: CanvasAssignment;
+	submissions: CanvasSubmission;
+	assignmentGroups: CanvasAssignmentGroup;
+	modules: CanvasModule;
+	moduleItems: CanvasModuleItem;
+	pages: CanvasPage;
+	announcements: CanvasAnnouncement;
+	calendarEvents: CanvasCalendarEvent;
+	canvasTodos: CanvasTodo;
+	courseOverlays: CanvasCourseOverlay;
 };
 
 export const canvasEntityCollectionNames: CanvasEntityCollectionName[] = [
-  "users",
-  "courses",
-  "enrollments",
-  "assignments",
-  "submissions",
-  "assignmentGroups",
-  "modules",
-  "moduleItems",
-  "pages",
-  "announcements",
-  "calendarEvents",
-  "canvasTodos",
+	"users",
+	"courses",
+	"enrollments",
+	"assignments",
+	"submissions",
+	"assignmentGroups",
+	"modules",
+	"moduleItems",
+	"pages",
+	"announcements",
+	"calendarEvents",
+	"canvasTodos",
+	"courseOverlays",
 ];
 
 export const canvasCollectionNames: CanvasCollectionName[] = [
-  ...canvasEntityCollectionNames,
-  "syncJobs",
-  "syncErrors",
-  "syncManifest",
+	...canvasEntityCollectionNames,
+	"syncJobs",
+	"syncErrors",
+	"syncManifest",
 ];

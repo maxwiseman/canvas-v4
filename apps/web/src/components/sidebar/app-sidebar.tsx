@@ -5,20 +5,22 @@ import {
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarGroupLabel,
+	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@canvas-v4/ui/components/sidebar";
 import { Link } from "@tanstack/react-router";
-import { GraduationCap, Home, MessageCircle, Settings } from "lucide-react";
+import { GraduationCap, Home, MessageCircle } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { canvas } from "@/lib/canvas";
+import { IconPicker } from "../icon-picker";
 import UserMenu from "../user-menu";
 import { ClassSidebar } from "./class-sidebar";
 
 export function AppSidebar() {
 	const [hasGoneBack, setHasGoneBack] = useState(false);
-	const { courses } = canvas.courses.useList();
+	const { courses, setIcon } = canvas.courses.useList();
 
 	return (
 		<Sidebar variant="inset">
@@ -72,6 +74,7 @@ export function AppSidebar() {
 									{courses.map((course) => (
 										<SidebarMenuItem key={course.name}>
 											<SidebarMenuButton
+												className="pl-8"
 												onClick={() => {
 													setHasGoneBack(false);
 												}}
@@ -82,9 +85,21 @@ export function AppSidebar() {
 													/>
 												}
 											>
-												{/*{course.icon}*/}
 												{course.name}
 											</SidebarMenuButton>
+											<SidebarMenuAction
+												render={
+													<IconPicker
+														triggerClassName="absolute top-1/2! left-1 right-auto size-6 -translate-y-1/2 hover:bg-sidebar-accent! hover:text-sidebar-accent-foreground"
+														// @ts-expect-error - This will only ever be the valid icons
+														value={course.app.icon ?? "book"}
+														onValueChange={(val) =>
+															setIcon(course.id.toString(), val)
+														}
+													/>
+												}
+												className="top-1/2! right-auto left-1 size-4 -translate-y-1/2"
+											/>
 										</SidebarMenuItem>
 									))}
 								</SidebarGroupContent>
