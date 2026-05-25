@@ -20,6 +20,7 @@
     "apps/web": {
       "name": "web",
       "dependencies": {
+        "@base-ui/react": "^1.5.0",
         "@canvas-v4/auth": "workspace:*",
         "@canvas-v4/canvas-sdk": "workspace:*",
         "@canvas-v4/canvas-sync": "workspace:*",

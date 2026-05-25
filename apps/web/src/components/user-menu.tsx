@@ -10,17 +10,22 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@canvas-v4/ui/components/dropdown-menu";
 import { Skeleton } from "@canvas-v4/ui/components/skeleton";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, SunMoon } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import {
 	clearCanvasSnapshot,
 	clearMutationQueue,
 } from "@/lib/canvas/indexed-db";
+import { useTheme } from "./theme-provider";
 
 export default function UserMenu() {
 	const navigate = useNavigate();
@@ -37,6 +42,8 @@ export default function UserMenu() {
 			</Link>
 		);
 	}
+
+	const { theme, setTheme } = useTheme();
 
 	return (
 		<DropdownMenu>
@@ -59,6 +66,22 @@ export default function UserMenu() {
 					<DropdownMenuItem render={<Link to="/settings" />}>
 						<Settings /> Settings
 					</DropdownMenuItem>
+					<DropdownMenuSub>
+						<DropdownMenuSubTrigger>
+							<SunMoon /> Theme
+						</DropdownMenuSubTrigger>
+						<DropdownMenuContent side="right">
+							<DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+								<DropdownMenuRadioItem value="system">
+									System
+								</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="dark">Dark</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="light">
+									Light
+								</DropdownMenuRadioItem>
+							</DropdownMenuRadioGroup>
+						</DropdownMenuContent>
+					</DropdownMenuSub>
 					<DropdownMenuItem
 						variant="destructive"
 						onClick={() => {

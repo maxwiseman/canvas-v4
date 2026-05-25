@@ -13,8 +13,8 @@ import { GraduationCap, Home, MessageCircle, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { canvas } from "@/lib/canvas";
-import { ClassSidebar } from "./sidebar/class-sidebar";
-import UserMenu from "./user-menu";
+import UserMenu from "../user-menu";
+import { ClassSidebar } from "./class-sidebar";
 
 export function AppSidebar() {
 	const [hasGoneBack, setHasGoneBack] = useState(false);
